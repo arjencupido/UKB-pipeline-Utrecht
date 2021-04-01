@@ -48,7 +48,13 @@ The idea to not merge this to 1 job is because sometimes:
 **Job4: ONLY combining genotype and phenotype data**
 - This job only runs the second R script from job 3. Handy if you just want to add a few SNPs to your dataset.
 
+**Analysis tools**
+-------------------------------
+**Load dataset**
+The R script 'source_base_dataset.r' can be sourced to load the data AND create an additional dataframe with information on all variants in your current dataset (e.g. alignment, allele frequencies). This is important for several downstream functions that rely on this list of variants to align your SNPs in your desired direction. 
 
+**Processing and analysis tools**
+These are finished but need some cleaning up and will come very very soon. 
 **NB: PARTICIPANTS THAT HAVE WITHDRAWN CONSENT ARE NOT EXCLUDED IN THESE SCRIPTS. PLEASE EXCLUDE THESE PARTICIPANTS AFTER FINALIZING YOUR DATASET.**
 
 
