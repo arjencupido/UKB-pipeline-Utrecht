@@ -18,7 +18,7 @@ The end result of this pipeline is a .rda file with phenotype and genotype data.
 - Create a folder 'UKB_files' and a folder 'UKB_scripts' in your folder of choice
 - Create a folder 'variants' and a folder 'CALIBER' in the UKB_scripts folder.
 - copy all scripts and the fields.csv file to the folder UKB_scripts. Copy the CALIBER data to CALIBER folder. Copy text files with the desired variant rsids to the variants folder. 
-- check each script for <USER> and fill out your folder of choice
+- check each script for the paths, search for the word USER (and the brackets around it), and replace it with your folder of choice
 
 Buildup:
 ------------
