@@ -38,7 +38,7 @@ The idea to not merge this to 1 job is because sometimes:
 - Courtesy to Amy Mason from University of Cambridge
 - NB SCRIPT DOES NOT WORK IF ONE RSID VARIANT IS DOUBLE IN THE VARIANT LIST! (e.g. a variant that has multiple different alleles)
 
-**Job3: phenoscript_cleaning_merging.**
+**Job3: phenoscript_cleaning_merging. NB 99% READY BUT NOT PUBLISHED HERE YET**
 - This job extracts the right datafields from the tab-delimited UKB files for both outcome and biomarkers
 - This job also comprises of 2 subsequent R scripts.
 - The first R script R_aggregate_ICD.R aggregates data on disease from the outcome fields to 1 variable. In essence these variables can be seen as lifetime incidence of disease X. It also renames columns. Outcome justification will come later
