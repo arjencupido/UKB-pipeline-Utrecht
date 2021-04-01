@@ -36,6 +36,7 @@ The idea to not merge this to 1 job is because sometimes:
 - This job converts the variants to .csv. 
 - calls script2_variant_extraction.r.
 - NB SCRIPT DOES NOT WORK IF ONE RSID VARIANT IS DOUBLE IN THE VARIANT LIST! (e.g. a variant that has multiple different alleles)
+- Initially written by Amy Mason (University of Cambridge)
 
 **Job3: phenoscript_cleaning_merging**
 - This job extracts the right datafields from the tab-delimited UKB files for both outcome and biomarkers.
