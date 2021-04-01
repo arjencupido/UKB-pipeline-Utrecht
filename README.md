@@ -58,4 +58,8 @@ These are finished but need some cleaning up and will come very very soon.
 
 **NB: PARTICIPANTS THAT HAVE WITHDRAWN CONSENT ARE NOT EXCLUDED IN THESE SCRIPTS. PLEASE EXCLUDE THESE PARTICIPANTS AFTER FINALIZING YOUR DATASET.**
 
-
+**Future updates**
+---------------------
+- Integration of primary care data
+- More outcomes
+- Others
