@@ -3,9 +3,9 @@ Pipeline for extraction of UK Biobank data and analysis tools in R
 
 Date: 16-MAR-2020
 
-Last updated: 31-MAR-2021
+Last updated: 01-APR-2021
 
-Email: a.j.cupido@amsterdamumc.nl / arjen.cupido@gmail.com
+Email: arjen.cupido@gmail.com
 
 **Introduction**
 -----------------
@@ -17,7 +17,7 @@ The end result of this pipeline is a .rda file with phenotype and genotype data.
 -------------------------------------
 - Create a folder 'UKB_files' and a folder 'UKB_scripts' in your folder of choice
 - Create a folder 'variants' and a folder 'CALIBER' in the UKB_scripts folder.
-- copy all scripts to the folder UKB_scripts. Copy the CALIBER data to caliber and text files with the desired variant rsids to the variants folder. 
+- copy all scripts and the fields.csv file to the folder UKB_scripts. Copy the CALIBER data to CALIBER folder. Copy text files with the desired variant rsids to the variants folder. 
 - check each script for <USER> and fill out your folder of choice
 
 Buildup:
