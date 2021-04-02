@@ -4,8 +4,6 @@ Date: 16-MAR-2020
 
 Last updated: 01-APR-2021
 
-Email: arjen.cupido@gmail.com
-
 **Introduction**
 -----------------
 This pipeline extracts phenotype data, transforms it to a certain extent, and combines it with genetic variants extracted from the genome-wide genetic data derived from the Axiom arrays.
