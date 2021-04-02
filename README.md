@@ -8,8 +8,8 @@ Email: arjen.cupido@gmail.com
 
 **Introduction**
 -----------------
-This pipeline extracts phenotype data, transforms it to a certain extent, and combines it with variants extracted from the genotype data.
-The end result of this pipeline is a .rda file with phenotype and genotype data, which can be used for relatively small analyses such as Mendelian Randomization with a limited number of SNPs. The phenotype data might or might not include - among others - quality measures (Principal components), patient characteristics, biomarkers and clinical outcome as defined by the author, and by the CALIBER consortium.
+This pipeline extracts phenotype data, transforms it to a certain extent, and combines it with genetic variants extracted from the genome-wide genetic data derived from the Axiom arrays.
+The end result of this pipeline is a .rda file with phenotype and genetic data, which can be used for relatively small analyses such as Mendelian Randomization with a limited number of SNPs. The phenotype data - depending on the specific UK Biobank application this pipeline is used on - includes quality measures (Principal components), patient characteristics, biomarkers and specific clinical outcome as defined by the author, and by the CALIBER consortium.
 
 
 **Prerequisites for pipeline to work:**
