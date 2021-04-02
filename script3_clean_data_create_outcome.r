@@ -62,7 +62,7 @@ d$CHD10hard <- as.integer(apply(d[,..ICD10], 1, function(r) any(r %in% c(grep("I
 
 d$CHD10soft <- as.integer(apply(d[,..ICD10], 1, function(r) any(r %in% c(grep("I20|I21|I22|I23|I24|I251|I252|I253|I255|I256|I258|I259", r, value =T)))))
 
-d$CDH9intermediate <- as.integer(apply(d[,..ICD9], 1, function(r) any(r %in% c(grep("^410|^411|^412|^4140|^4148|^4149", r, value =T)))))
+d$CHD9intermediate <- as.integer(apply(d[,..ICD9], 1, function(r) any(r %in% c(grep("^410|^411|^412|^4140|^4148|^4149", r, value =T)))))
 
 d$CHD9hard <- as.integer(apply(d[,..ICD9], 1, function(r) any(r %in% c(grep("^410|^411|^412", r, value =T)))))
 
