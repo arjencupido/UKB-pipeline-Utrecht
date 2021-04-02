@@ -14,6 +14,7 @@ The end result of this pipeline is a .rda file with phenotype and genotype data,
 
 **Prerequisites for pipeline to work:**
 -------------------------------------
+- Tested in R 4.0.3. Requires packages 'dplyr', 'data.table', 'stringr', 'RBGen'
 - Create a folder 'UKB_files' and a folder 'UKB_scripts' in your folder of choice
 - Create a folder 'variants' and a folder 'CALIBER' in the UKB_scripts folder.
 - copy all scripts and the fields.csv file to the folder UKB_scripts. Copy the CALIBER data to CALIBER folder. Copy text files with the desired variant rsids to the variants folder. 
