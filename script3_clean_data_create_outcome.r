@@ -310,7 +310,7 @@ for(i in 1:nrow(outcomes)){
 }
 
 
-
+save(d, file=checkpoint2.rda)
 
 message("Extract dates for MI, PTCA_CABG and PAD") 
 ### MI ICD10  
@@ -519,7 +519,7 @@ d<-  left_join(d, dateresults, by = "f.eid")
 
 
 message("wrapping up....")
-save(d, file="<USER>/UKB_files/checkpoint2.rda")
+save(d, file="<USER>/UKB_files/checkpoint3.rda")
 #########################
 
 
@@ -608,7 +608,7 @@ draw <- d
 save(draw, file="<USER>/UKB_files/ICD_outcome_raw.rda")
 
 d$feid <- d$f.eid
-d2 <- d %>% select(-contains(c('DateOfFirst','OperativeProcedures', 'Diagnoses_', 'Contributory.Secondary.CausesOfDeath.','DateOfCancerDiagnosis','TypeOfCancer', 'Treatment.MedicationCode','Non_CancerIllnessCodeSelf', 'MedicationForCholesterolBloodPressureDiabetes' )))
+d <- d %>% select(-contains(c('DateOfFirst','OperativeProcedures', 'Diagnoses_', 'Contributory.Secondary.CausesOfDeath.','DateOfCancerDiagnosis','TypeOfCancer', 'Treatment.MedicationCode','Non_CancerIllnessCodeSelf', 'MedicationForCholesterolBloodPressureDiabetes' )))
 
 save(d, file="<USER>/UKB_files/ICD_outcome_cleaned.rda")
 
