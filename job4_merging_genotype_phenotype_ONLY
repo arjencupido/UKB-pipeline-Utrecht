@@ -5,4 +5,4 @@
 #SBATCH --mail-user=arjen.cupido@gmail.com
 
 
-/hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript /hpc/dhl_ec/arjencupido/UKB_scripts/20210129_NEW/script3_merge_genotype_phenotype.r
+/<USER>/R-4.0.3/bin/Rscript /hpc/dhl_ec/arjencupido/UKB_scripts/20210129_NEW/script3_merge_genotype_phenotype.r
