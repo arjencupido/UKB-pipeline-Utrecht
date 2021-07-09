@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --time=03:59:59
 #SBATCH --mem=64G
-#SBATCH --job-name 1_2_Genoscript                                             		  # the name of this script
+#SBATCH --job-name run_UKB_pipeline                                             		  # the name of this script
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=m.vanvugt-2@umcutrecht.nl
 
@@ -70,57 +70,62 @@ script_copyright_message() {
 
 script_arguments_error() {
 	echoerror "$1" # ERROR MESSAGE
-	echoerror "- Argument #1   -- Name of the file containing the variants including path, could be '/hpc/dhl_ec/mvanvugt/UKBB/variants.txt'"
-  echoerror "- This file should contain two columns without a header: column 1 is the chromosome number and column 2 is the rsid."
-  echoerror "- Argument #2   -- Path to where you want the output to be stored, could be '/hpc/dhl_ec/mvanvugt/UKBB'"
+  echoerror "- Argument #1  --  Directory to the pipeline, could be '/hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht'"
+  echoerror "- Argument #2  --  All/four  -- All indicates all scripts should be run, four means only job4"
+  echoerror "- Argument #3  --  Input directory, could be '/hpc/dhl_ec/mvanvugt/test'"
+  echoerror "- Argument #3  --  Output directory, could be '/hpc/dhl_ec/mvanvugt/test/results'"
 	echoerror ""
-	echoerror "An example command would be: job1_genoscript.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB/variants.txt] [arg2: /hpc/dhl_ec/mvanvugt/UKBB]."
+	echoerror "An example command would be: run_UKB_pipeline.sh [arg1: /hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht] [arg2: All] [arg3: /hpc/dhl_ec/mvanvugt/test] [arg4: /hpc/dhl_ec/mvanvugt/test]."
 	echoerror "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   	# The wrong arguments are passed, so we'll exit the script now!
   	exit 1
 }
 
-if [ $# -lt 2]; then
+if [ $# -lt 4]; then
   echo "Error, number of arguments found "$#"."
-  script_arguments_error "You must supply [2] correct arguments when running this script"
+  script_arguments_error "You must supply [4] correct arguments when running this script"
 
 else
-  SCRIPT="${SLURM_SUBMIT_DIR}"
-  INPUT="$1"
-  OUTPUT="$2"
 
-  if [[ ! -d ${OUTPUT}/temp/ ]]; then
+  SCRIPT="$1"
+  TYPE="$2"
+  INPUT="$3"
+  OUTPUT="$4"
 
-    mkdir -v ${OUTPUT}/temp/
+  echo ""
+  echo "Script directory:____________________________________ [ ${SCRIPT} ]"
+  echo "Input directory:_____________________________________ [ ${INPUT} ]"
+  echo "Output directory:____________________________________ [ ${OUTPUT} ]"
+  echo ""
+  cd ${SCRIPT}
+
+  if [[ ! -d ${SCRIPT}/logs/ ]]; then
+
+    mkdir -v ${SCRIPT}/logs/
 
   fi
 
-  TEMP="${OUTPUT}/temp"
-  cd ${TEMP}
 
-  echo "Script directory:___________________________________________ [ ${SCRIPT} ]"
-  echo "Output directory:___________________________________________ [ ${OUTPUT} ]"
-  echo ""
-  echo "Input file with variants to be selected:____________________ [ ${INPUT} ]"
+  if [[ ${TYPE} == "All" ]]; then
 
-  for CHR in $(seq 1 22); do
+    echobold "Executing the full pipeline"
+    echo ""
+    echo "Starting with the genotypes"
+    DEP1=$(sbatch --output ${SCRIPT}/logs/job1.log ${SCRIPT}/job1_genoscript.sh ${INPUT} ${OUTPUT} | sed 's/Submitted batch job //')
 
-    echo "Working on chromosome ${CHR} now"
-    awk '$1 == ${CHR} {print $2}' ${INPUT} > ${TEMP}/chr${CHR}.txt
-    bgenix -g  /hpc/ukbiobank/genetic_v3/ukb_imp_chr1_v3.bgen -incl-rsids ${TEMP}/chr${CHR}.txt > ${OUTPUT}/chr${CHR}.bgen
+    echo "Continuing with the phenotypes"
+    sbatch --output --dependency=afterok:${DEP1} ${SCRIPT}/logs/job3.log ${SCRIPT}/job3_phenoscript_cleaning_merging.sh ${OUTPUT} test
 
-    # Create index files
-    bgenix -g ${OUTPUT}/chr${CHR}.bgen -index -clobber
 
-    # Create list files for use in R
-    bgenix -g ${OUTPUT}/chr${CHR}.bgen -list > ${OUTPUT}/chr${CHR}.list
+  elif [[ ${TYPE} == "four" ]]; then
 
-  done
+    echobold "ONLY combining genotype and phenotype data"
+    sbatch --output ${SCRIPT}/logs/job4.log ${SCRIPT}/job4_merging_genotype_phenotype_ONLY.sh ${OUTPUT}
+
+  else
+
+    echoerror "Type not recognized, please specify the second argument as All/four"
+
+  fi
 
 fi
-
-echo "Putting R to work"
-/hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script2_variant_extraction.r ${OUTPUT} TRUE
-
-# rm -r ${TEMP}
-echo "Finished! Finito!"

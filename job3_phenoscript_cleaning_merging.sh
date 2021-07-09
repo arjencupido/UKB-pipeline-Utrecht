@@ -94,7 +94,7 @@ else
   OUTPUT=$1
   NAME=$2
   UKB=${4:-/hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab}
-  SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+  SCRIPT="${SLURM_SUBMIT_DIR}"
   PHENO="${3:-$( echo ${SCRIPT}/Phenotypes.tsv )}"
 
   echo "Script directory:________________________________________________ [ ${SCRIPT} ]"
