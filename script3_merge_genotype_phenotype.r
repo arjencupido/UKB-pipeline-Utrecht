@@ -1,41 +1,34 @@
 # R script for renaming biomarkers UKB
+
+# Arguments expected:
+#         #1 -- Directory to the chromosome csv files and output directory
+
+args = commandArgs(trailingOnly = TRUE)
+input = args[1]
+
 #libraries
 library(dplyr)
 
 #read file
-setwd("<USER>/UKB_files/")
+setwd(input)
 
 sample <- read.delim("/hpc/dhl_ec/data/ukbiobank/genetic_v3/ukb24711_imp_chr1_v3_s487371.sample",  sep = ' ', header=T)
 sample <- sample[-1,] # Remove first column
 
 chr1 <- read.csv("chr1.csv", header = T)
-chr2 <- read.csv("chr2.csv", header = T) %>% subset(select=-X)
-chr3 <- read.csv("chr3.csv", header = T) %>% subset(select=-X)
-chr4 <- read.csv("chr4.csv", header = T) %>% subset(select=-X)
-chr5 <- read.csv("chr5.csv", header = T) %>% subset(select=-X)
-chr6 <- read.csv("chr6.csv", header = T) %>% subset(select=-X)
-chr7 <- read.csv("chr7.csv", header = T) %>% subset(select=-X)
-chr8 <- read.csv("chr8.csv", header = T) %>% subset(select=-X)
-chr9 <- read.csv("chr9.csv", header = T) %>% subset(select=-X)
-chr10 <- read.csv("chr10.csv", header = T) %>% subset(select=-X)
-chr11 <- read.csv("chr11.csv", header = T) %>% subset(select=-X)
-chr12<- read.csv("chr12.csv", header = T) %>% subset(select=-X)
-chr13 <- read.csv("chr13.csv", header = T) %>% subset(select=-X)
-chr14 <- read.csv("chr14.csv", header = T) %>% subset(select=-X)
-chr15 <- read.csv("chr15.csv", header = T) %>% subset(select=-X)
-chr16 <- read.csv("chr16.csv", header = T) %>% subset(select=-X)
-chr17 <- read.csv("chr17.csv", header = T) %>% subset(select=-X)
-chr18 <- read.csv("chr18.csv", header = T) %>% subset(select=-X)
-chr19 <- read.csv("chr19.csv", header = T) %>% subset(select=-X)
-chr20 <- read.csv("chr20.csv", header = T) %>% subset(select=-X)
-chr21 <- read.csv("chr21.csv", header = T) %>% subset(select=-X)
-chr22 <- read.csv("chr22.csv", header = T) %>% subset(select=-X)
 
-load(file="<USER>/UKB_files/ICD_outcome_cleaned.rda")
+chrs <- list()
+for (i in 2:22) {
+
+  chrs[[i]] <- read.csv(paste0("chr", i, ".csv"), header = T) %>% subset(select=-X))
+
+}
+
+load(file = paste0(input, "/ICD_outcome_cleaned.rda"))
 
 
-tot <- cbind(sample, chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10, chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chr20, chr21, chr22) %>% inner_join(d, by = c('ID_1' = 'feid'), keep = T)
+tot <- cbind(sample, chr1, chrs[[2]], chrs[[3]], chrs[[4]], chrs[[5]], chrs[[6]], chrs[[7]], chrs[[8]], chrs[[9]], chrs[[10]], chrs[[11]], chrs[[12]], chrs[[13]], chrs[[14]], chrs[[15]], chrs[[16]], chrs[[17]], chrs[[18]], chrs[[19]], chrs[[20]], chrs[[21]], chrs[[22]]) %>% inner_join(d, by = c('ID_1' = 'feid'), keep = T)
 
 d <- tot
 
-save(d, file="<USER>/UKB_files/FINAL_UKB_dataset.rda")
+save(d, file = paste0(input, "/FINAL_UKB_dataset.rda"))

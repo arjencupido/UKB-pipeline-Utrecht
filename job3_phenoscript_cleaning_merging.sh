@@ -1,22 +1,21 @@
 #!/bin/bash
-#SBATCH --time=03:59:59
+#SBATCH --time=14:59:59
 #SBATCH --mem=64G
-#SBATCH --job-name 1_2_Genoscript                                             		  # the name of this script
+#SBATCH --job-name 3_Phenoscript                                             		  # the name of this script
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=m.vanvugt-2@umcutrecht.nl
 
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "              Script to extract variants of choice and create the index files and list files for further processing              "
+echo "                                        Script to extract phenotype data from UKB tab file                                       "
 echo "                                                      version 1.1 (20210709)                                                     "
 echo ""
 echo "* Written by      : Arjen Cupido"
 echo "* Adapted by      : Marion van Vugt"
 echo "* E-mail          : m.vanvugt-2@umcutrecht.nl"
 echo "* Last update     : 2021-07-09"
-echo "* Version         : Genoscript_1.1"
+echo "* Version         : Phenoscript_1.1"
 echo ""
-echo "* Description     : This script extracts variants of choice by reading in the names of the variants that are defined in the "
-echo "                    indicated file. It also creates the index files and list files for further processing."
+echo "* Description     : This script extracts phenotype data from UKB tab file."
 echo ""
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
@@ -67,14 +66,20 @@ script_copyright_message() {
 	echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 }
 
-
 script_arguments_error() {
 	echoerror "$1" # ERROR MESSAGE
-	echoerror "- Argument #1   -- Name of the file containing the variants including path, could be '/hpc/dhl_ec/mvanvugt/UKBB/variants.txt'"
-  echoerror "- This file should contain two columns without a header: column 1 is the chromosome number and column 2 is the rsid."
-  echoerror "- Argument #2   -- Path to where you want the output to be stored, could be '/hpc/dhl_ec/mvanvugt/UKBB'"
+	echoerror "- Argument #1   -- Path to where you want the output to be stored, could be '/hpc/dhl_ec/mvanvugt/UKBB'"
+  echoerror "- Argument #2   -- Prefix of your output files, could be 'Project1'"
+  echoerror "- Argument #3   -- OPTIONAL -- Path and name to/of the file with phenotypes to be selected from the UKB phenotype file, could be '/hpc/dhl_ec/mvanvugt/UKBB/phenotypes.tsv'"
+  echoerror "- Argument #4   -- OPTIONAL -- Path and name to/of the UKB phenotype file, could be '/hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab'"
 	echoerror ""
-	echoerror "An example command would be: job1_genoscript.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB/variants.txt] [arg2: /hpc/dhl_ec/mvanvugt/UKBB]."
+  echoerror "An example command would be: job3_phenoscript_cleaning_merging.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB] [arg2: Project1] [arg3: /hpc/dhl_ec/mvanvugt/UKBB/phenotypes.tsv] [arg4: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
+  echoerror ""
+  echoerror "For argument #3 and #4, defaults are stated, namely:"
+  echoerror "Argument #3 default = Phenotypes.tsv (present in the folder of the scripts)"
+  echoerror "Argument #4 default = /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab"
+  echoerror "If you want to change the UK Biobank phenotype file, but not the default of the selection file, use the following command:"
+	echoerror "job3_phenoscript_cleaning_merging.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB] [arg2: Project1] [arg3: ""] [arg4: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
 	echoerror "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   	# The wrong arguments are passed, so we'll exit the script now!
   	exit 1
@@ -85,42 +90,28 @@ if [ $# -lt 2]; then
   script_arguments_error "You must supply [2] correct arguments when running this script"
 
 else
+
+  OUTPUT=$1
+  NAME=$2
+  UKB=${4:-/hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab}
   SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-  INPUT="$1"
-  OUTPUT="$2"
+  PHENO="${3:-$( echo ${SCRIPT}/Phenotypes.tsv )}"
 
-  if [[ ! -d ${OUTPUT}/temp/ ]]; then
-
-    mkdir -v ${OUTPUT}/temp/
-
-  fi
-
-  TEMP="${OUTPUT}/temp"
-  cd ${TEMP}
-
-  echo "Script directory:___________________________________________ [ ${SCRIPT} ]"
-  echo "Output directory:___________________________________________ [ ${OUTPUT} ]"
+  echo "Script directory:________________________________________________ [ ${SCRIPT} ]"
+  echo "Output directory:________________________________________________ [ ${OUTPUT} ]"
   echo ""
-  echo "Input file with variants to be selected:____________________ [ ${INPUT} ]"
+  echo "Phenotype file of the UKB:_______________________________________ [ ${UKB} ]"
+  echo "File with phenotypes to be selected from UKB:____________________ [ ${PHENO} ]"
+  echo "Prefix of the output file with selected phenotypes:______________ [ ${NAME} ]"
 
-  for CHR in $(seq 1 22); do
+  # Cut ICD and other outcome data, please define the place where your UKB data is.
+  sbatch /hpc/dhl_ec/mvanvugt/scripts/ukb_pheno_v1.sh ${UKB} ${PHENO} ${OUTPUT} ${NAME}
 
-    echo "Working on chromosome ${CHR} now"
-    awk '$1 == ${CHR} {print $2}' ${INPUT} > ${TEMP}/chr${CHR}.txt
-    bgenix -g  /hpc/ukbiobank/genetic_v3/ukb_imp_chr1_v3.bgen -incl-rsids ${TEMP}/chr${CHR}.txt > ${OUTPUT}/chr${CHR}.bgen
-
-    # Create index files
-    bgenix -g ${OUTPUT}/chr${CHR}.bgen -index -clobber
-
-    # Create list files for use in R
-    bgenix -g ${OUTPUT}/chr${CHR}.bgen -list > ${OUTPUT}/chr${CHR}.list
-
-  done
+  # Clean data, create outcome variables.
+  /hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script3_clean_data_create_outcome.r ${OUTPUT}/${NAME}_ukb_phenotypes.tab ${SCRIPT} ${OUTPUT}
+  # Merge with genotype data.
+  /hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script3_merge_genotype_phenotype.r ${OUTPUT}
 
 fi
 
-echo "Putting R to work"
-/hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script2_variant_extraction.r ${OUTPUT} TRUE
-
-# rm -r ${TEMP}
 echo "Finished! Finito!"
