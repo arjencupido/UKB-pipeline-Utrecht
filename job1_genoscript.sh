@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --time=03:59:59
 #SBATCH --mem=64G
-#SBATCH --job-name 1_2_Genoscript                                             		  # the name of this script
+#SBATCH --job-name 1_Genoscript                                             		  # the name of this script
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=m.vanvugt-2@umcutrecht.nl
 
@@ -107,20 +107,20 @@ else
 
     echo "Working on chromosome ${CHR} now"
     awk -v var=${CHR} '$1 == var {print $2}' ${INPUT} > ${TEMP}/chr${CHR}.txt
-    bgenix -g  /hpc/ukbiobank/genetic_v3/ukb_imp_chr${CHR}_v3.bgen -incl-rsids ${TEMP}/chr${CHR}.txt > ${OUTPUT}/chr${CHR}.bgen
+    bgenix -g  /hpc/ukbiobank/genetic_v3/ukb_imp_chr${CHR}_v3.bgen -incl-rsids ${TEMP}/chr${CHR}.txt > ${TEMP}/chr${CHR}.bgen
 
     # Create index files
-    bgenix -g ${OUTPUT}/chr${CHR}.bgen -index -clobber
+    bgenix -g ${TEMP}/chr${CHR}.bgen -index -clobber
 
     # Create list files for use in R
-    bgenix -g ${OUTPUT}/chr${CHR}.bgen -list > ${OUTPUT}/chr${CHR}.list
+    bgenix -g ${TEMP}/chr${CHR}.bgen -list > ${TEMP}/chr${CHR}.list
 
   done
 
 fi
 
 echo "Putting R to work"
-/hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script2_variant_extraction.r ${OUTPUT} TRUE
+/hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script1_variant_extraction.r ${OUTPUT} TRUE
 
 # rm -r ${TEMP}
 echo "Finished! Finito!"

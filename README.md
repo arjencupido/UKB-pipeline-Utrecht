@@ -57,6 +57,8 @@ These are finished but need some cleaning up and will come very very soon.
 
 **Future updates**
 ---------------------
-- Integration of primary care data
-- More outcomes
-- Others
+[ ] Integration of primary care data
+[ ] More outcomes
+[ ] Others
+[ ] Add progress bar job3_clean
+[ ] Remove temporary folder

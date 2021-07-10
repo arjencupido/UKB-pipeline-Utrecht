@@ -97,6 +97,12 @@ else
   SCRIPT="${SLURM_SUBMIT_DIR}"
   PHENO="${3:-$( echo ${SCRIPT}/Phenotypes.tsv )}"
 
+  if [[ ! -d ${SCRIPT}/logs/ ]]; then
+
+    mkdir -v ${SCRIPT}/logs/
+
+  fi
+
   echo "Script directory:________________________________________________ [ ${SCRIPT} ]"
   echo "Output directory:________________________________________________ [ ${OUTPUT} ]"
   echo ""
@@ -108,7 +114,7 @@ else
   DEP1=$(sbatch /hpc/dhl_ec/mvanvugt/scripts/ukb_pheno_v1.sh ${UKB} ${PHENO} ${OUTPUT} ${NAME} | sed 's/Submitted batch job //')
 
   # Submit R-wrapper for cleaning and merging
-  sbatch --dependency=afterok:${DEP1} ${SCRIPT}/job3_cleaning_merging.sh ${OUTPUT} ${NAME} ${PHENO} ${UKB}
+  sbatch --output ${SCRIPT}/logs/job3.log --dependency=afterok:${DEP1} ${SCRIPT}/job3_cleaning_merging.sh ${OUTPUT} ${NAME} ${PHENO} ${UKB}
 
 fi
 

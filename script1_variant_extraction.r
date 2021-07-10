@@ -11,12 +11,12 @@
 #########################
 
 args = commandArgs(trailingOnly = TRUE)
-input = args[1]
+output = args[1]
 type = args[2]
 
 print(type)
 
-setwd(input)
+setwd(output)
 require(rbgen)
 require(dplyr)
 
@@ -34,7 +34,7 @@ if (type == "TRUE") {
 
     print(paste0(chromosomevector[i]))
 
-    variants = read.delim(paste0(input, "/", chromosomevector[i], ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
+    variants = read.delim(paste0(output, "/temp/", chromosomevector[i], ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
     varvec <- c(as.character(variants$rsid))
 
     data = bgen.load(paste0(chromosomevector[i],".bgen"), rsids = varvec)
@@ -57,7 +57,7 @@ if (type == "TRUE") {
   # For individual analyses
 
   cat(paste0("Only chromosome ", type, " is analyzed...\n"))
-  variants = read.delim(paste0(input, "/chr", type, ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
+  variants = read.delim(paste0(output, "/temp/chr", type, ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
   varvec <- c(as.character(variants$rsid))
   data = bgen.load(paste0("chr", type, ".bgen"), rsids = varvec)
   data.summ = apply(data$data, 1, function(data) { return(data[,1]*0 + data[,2]*1 + data[,3]*2) })

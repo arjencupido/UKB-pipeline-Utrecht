@@ -132,7 +132,7 @@ else
     DEP1=$(sbatch --output ${SCRIPT}/logs/job1.log ${SCRIPT}/job1_genoscript.sh ${INPUT} ${OUTPUT} | sed 's/Submitted batch job //')
 
     echo "Continuing with the phenotypes"
-    sbatch --output ${SCRIPT}/logs/job3.log --dependency=afterok:${DEP1} ${SCRIPT}/job3_phenoscript_cleaning_merging.sh ${OUTPUT} ${NAME} ${PHENO} ${UKB}
+    sbatch --output ${SCRIPT}/logs/job2.log --dependency=afterok:${DEP1} ${SCRIPT}/job2_phenoscript.sh ${OUTPUT} ${NAME} ${PHENO} ${UKB}
 
 
   elif [[ ${TYPE} == "four" ]]; then
