@@ -37,7 +37,7 @@ if (type == "TRUE") {
     variants = read.delim(paste0(output, "/temp/", chromosomevector[i], ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
     varvec <- c(as.character(variants$rsid))
 
-    data = bgen.load(paste0(chromosomevector[i],".bgen"), rsids = varvec)
+    data = bgen.load(paste0("temp/", chromosomevector[i],".bgen"), rsids = varvec)
     data.summ = apply(data$data, 1, function(data) { return(data[,1]*0 + data[,2]*1 + data[,3]*2) })
     #chromosomelist[paste(chromosomevector[i])] <- data.summ
     if (i == 1) {

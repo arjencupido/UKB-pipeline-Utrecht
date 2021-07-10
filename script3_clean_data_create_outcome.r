@@ -36,6 +36,8 @@ backup <- d
 # Outcome list from CALIBER
 outcomes <-  read.csv(paste0(scripts, "/CALIBER/dictionary.csv"))
 fields <- read.csv(paste0(scripts, "/fields.csv"))
+fields$code <- paste0(fields$code, ".")
+fields$titlemerge <- paste0(fields$titlemerge, ".")
 
 ############
 # Define which field is what type of field. I have defined the following: ICD10, ICD9, Procedures, Death registries, Self report, Principal components
@@ -291,7 +293,7 @@ d$nonalcoholicfattyliver <- as.integer(apply(d[,..ICD10], 1, function(r) any(r %
 d$statin <- as.integer(apply(d[,..medication], 1, function(r) any(r %in% c(grep("1140861958|1140888594|1140888648|1141146234|1141192410", r, value =T)))))
 d$ezetimibe <- as.integer(apply(d[,..medication], 1, function(r) any(r %in% c(grep("1141192736|1141192740", r, value =T)))))
 
-# Save checkpoint in case something goes wrong after this. 
+# Save checkpoint in case something goes wrong after this.
 save(d,file= paste0(output, "/checkpoint1.rda"))
 
 
@@ -328,218 +330,235 @@ message("Extract dates for MI, PTCA_CABG and PAD")
 ### MI ICD10
 f<- subset(d, CHD10hard ==1)
 
-datelist <- list()
-for(i in 1:nrow(f)){
+if (nrow(f) > 0) {
 
-  # Select row
-  x <- f[i,]
-  ID <- x$f.eid
-  # Identify columns in which diagnosis is
-  diagnosiscolumn <- c(apply(x[,..ICD10], 1, function(r) which(r %in% grep(pattern = "I21|I22|I23|I241|I248|I249|I252", r, value = T))))
+  datelist <- list()
+  for(i in 1:nrow(f)){
 
-  # Identify corresponding date columns
-  datecolumn <- ICD10date[diagnosiscolumn]
+    # Select row
+    x <- f[i,]
+    ID <- x$f.eid
+    # Identify columns in which diagnosis is
+    diagnosiscolumn <- c(apply(x[,..ICD10], 1, function(r) which(r %in% grep(pattern = "I21|I22|I23|I241|I248|I249|I252", r, value = T))))
 
-  # Extract multiple of dates
-  datesframe <- subset(x, select = datecolumn)
+    # Identify corresponding date columns
+    datecolumn <- ICD10date[diagnosiscolumn]
 
-  # Mutate to date columns
-  datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
+    # Extract multiple of dates
+    datesframe <- subset(x, select = datecolumn)
 
-  # Select first occurrence
-  r <- c(apply(datesframe, 1, function(r) min(r)))
-  # Append to list
+    # Mutate to date columns
+    datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
 
-  colnames(datesframe) <- as.character(1:ncol(datesframe))
+    # Select first occurrence
+    r <- c(apply(datesframe, 1, function(r) min(r)))
+    # Append to list
 
-  datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD10hard_first" =  r, datesframe)
+    colnames(datesframe) <- as.character(1:ncol(datesframe))
+
+    datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD10hard_first" =  r, datesframe)
+
+  }
+
+  # Unlist
+  dateresults <- do.call(bind_rows, datelist)
+
+  # Rename
+  colnames(dateresults) <- gsub("X", "CHD10hard_date", colnames(dateresults))
+  # dateresults
+  # Left_join to dataset
+  d<- left_join(d, dateresults, by = "f.eid")
 
 }
-
-# Unlist
-dateresults <- do.call(bind_rows, datelist)
-
-# Rename
-colnames(dateresults) <- gsub("X", "CHD10hard_date", colnames(dateresults))
-# dateresults
-# Left_join to dataset
-d<- left_join(d, dateresults, by = "f.eid")
 
 message("MI ICD9")
 ### MI ICD9
 f<- subset(d, d$CHD9hard ==1)
 
-datelist <- list()
-for(i in 1:nrow(f)){
+if (nrow(f) > 0) {
 
-  # Select row
-  x <- f[i,]
-  ID <- x$f.eid
-  # Identify columns in which diagnosis is
-  diagnosiscolumn <- c(apply(x[,..ICD9], 1, function(r) which(r %in% grep(pattern = "^410|^411|^412", r, value = T))))
+  datelist <- list()
+  for(i in 1:nrow(f)){
 
-  # Identify corresponding date columns
-  datecolumn <- ICD9date[diagnosiscolumn]
+    # Select row
+    x <- f[i,]
+    ID <- x$f.eid
+    # Identify columns in which diagnosis is
+    diagnosiscolumn <- c(apply(x[,..ICD9], 1, function(r) which(r %in% grep(pattern = "^410|^411|^412", r, value = T))))
 
-  # Extract multiple of dates
-  datesframe <- subset(x, select = datecolumn)
+    # Identify corresponding date columns
+    datecolumn <- ICD9date[diagnosiscolumn]
 
-  # Mutate to date columns
-  datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
+    # Extract multiple of dates
+    datesframe <- subset(x, select = datecolumn)
 
-  # Select first occurrence
-  r <- c(apply(datesframe, 1, function(r) min(r)))
-  # Append to list
+    # Mutate to date columns
+    datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
 
-  colnames(datesframe) <- as.character(1:ncol(datesframe))
+    # Select first occurrence
+    r <- c(apply(datesframe, 1, function(r) min(r)))
+    # Append to list
 
-  datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD9hard_first" =  r, datesframe)
+    colnames(datesframe) <- as.character(1:ncol(datesframe))
+
+    datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD9hard_first" =  r, datesframe)
+
+  }
+
+  # Unlist
+  dateresults <- do.call(bind_rows, datelist)
+
+  # Rename
+  colnames(dateresults) <- gsub("X", "CHD9harddate", colnames(dateresults))
+  # Left_join to dataset
+  d <- left_join(d, dateresults, by = "f.eid")
 
 }
-
-# Unlist
-dateresults <- do.call(bind_rows, datelist)
-
-# Rename
-colnames(dateresults) <- gsub("X", "CHD9harddate", colnames(dateresults))
-# Left_join to dataset
-d <- left_join(d, dateresults, by = "f.eid")
 
 #####################
 f<- subset(d, CHD10intermediate ==1)
 
-datelist <- list()
-for(i in 1:nrow(f)){
+if (nrow(f) > 0 ) {
 
-  # Select row
-  x <- f[i,]
-  ID <- x$f.eid
-  # Identify columns in which diagnosis is
-  diagnosiscolumn <- c(apply(x[,..ICD10], 1, function(r) which(r %in% grep(pattern = "I21|I22|I23|I241|I248|I249|I251|I252|I253|I255|I256|I258|I259", r, value = T))))
+  datelist <- list()
+  for(i in 1:nrow(f)){
 
-  # Identify corresponding date columns
-  datecolumn <- ICD10date[diagnosiscolumn]
+    # Select row
+    x <- f[i,]
+    ID <- x$f.eid
+    # Identify columns in which diagnosis is
+    diagnosiscolumn <- c(apply(x[,..ICD10], 1, function(r) which(r %in% grep(pattern = "I21|I22|I23|I241|I248|I249|I251|I252|I253|I255|I256|I258|I259", r, value = T))))
 
-  # Extract multiple of dates
-  datesframe <- subset(x, select = datecolumn)
+    # Identify corresponding date columns
+    datecolumn <- ICD10date[diagnosiscolumn]
 
-  # Mutate to date columns
-  datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
+    # Extract multiple of dates
+    datesframe <- subset(x, select = datecolumn)
 
-  # Select first occurrence
-  r <- c(apply(datesframe, 1, function(r) min(r)))
-  # Append to list
+    # Mutate to date columns
+    datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
 
-  colnames(datesframe) <- as.character(1:ncol(datesframe))
+    # Select first occurrence
+    r <- c(apply(datesframe, 1, function(r) min(r)))
+    # Append to list
 
-  datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD10_first" =  r, datesframe)
+    colnames(datesframe) <- as.character(1:ncol(datesframe))
+
+    datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD10_first" =  r, datesframe)
+
+  }
+
+  # Unlist
+  dateresults <- do.call(bind_rows, datelist)
+
+  # Rename
+  colnames(dateresults) <- gsub("X", "CHD10date", colnames(dateresults))
+  # dateresults
+  # Left_join to dataset
+  d<- left_join(d, dateresults, by = "f.eid")
 
 }
-
-# Unlist
-dateresults <- do.call(bind_rows, datelist)
-
-# Rename
-colnames(dateresults) <- gsub("X", "CHD10date", colnames(dateresults))
-# dateresults
-# Left_join to dataset
-d<- left_join(d, dateresults, by = "f.eid")
-
 message("MI ICD9")
 ### MI ICD9
 f<- subset(d, d$CHD9intermediate ==1)
 
-datelist <- list()
-for(i in 1:nrow(f)){
+if(nrow(f) > 0 ) {
 
-  # Select row
-  x <- f[i,]
-  ID <- x$f.eid
-  # Identify columns in which diagnosis is
-  diagnosiscolumn <- c(apply(x[,..ICD9], 1, function(r) which(r %in% grep(pattern = "^410|^411|^412|^4140|^4148|^4149", r, value = T))))
+  datelist <- list()
+  for(i in 1:nrow(f)){
 
-  # Identify corresponding date columns
-  datecolumn <- ICD9date[diagnosiscolumn]
+    # Select row
+    x <- f[i,]
+    ID <- x$f.eid
+    # Identify columns in which diagnosis is
+    diagnosiscolumn <- c(apply(x[,..ICD9], 1, function(r) which(r %in% grep(pattern = "^410|^411|^412|^4140|^4148|^4149", r, value = T))))
 
-  # Extract multiple of dates
-  datesframe <- subset(x, select = datecolumn)
+    # Identify corresponding date columns
+    datecolumn <- ICD9date[diagnosiscolumn]
 
-  # Mutate to date columns
-  datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
+    # Extract multiple of dates
+    datesframe <- subset(x, select = datecolumn)
 
-  # Select first occurrence
-  r <- c(apply(datesframe, 1, function(r) min(r)))
-  # Append to list
+    # Mutate to date columns
+    datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
 
-  colnames(datesframe) <- as.character(1:ncol(datesframe))
+    # Select first occurrence
+    r <- c(apply(datesframe, 1, function(r) min(r)))
+    # Append to list
 
-  datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD9_first" =  r, datesframe)
+    colnames(datesframe) <- as.character(1:ncol(datesframe))
+
+    datelist[[i]] <- data.frame("f.eid" = x$f.eid, "CHD9_first" =  r, datesframe)
+
+  }
+
+  # Unlist
+  dateresults <- do.call(bind_rows, datelist)
+
+  # Rename
+  colnames(dateresults) <- gsub("X", "CHD9_date", colnames(dateresults))
+  # Left_join to dataset
+  d <- left_join(d, dateresults, by = "f.eid")
 
 }
-
-# Unlist
-dateresults <- do.call(bind_rows, datelist)
-
-# Rename
-colnames(dateresults) <- gsub("X", "CHD9_date", colnames(dateresults))
-# Left_join to dataset
-d <- left_join(d, dateresults, by = "f.eid")
-
-
-
 
 message("Procedures")
 #######
 ### PTCA_CABG proc
 f<- subset(d, d$HeartProcedure ==1)
 
-datelist <- list()
-for(i in 1:nrow(f)){
+if (nrow(f) > 0) {
 
-  # Select row
-  x <- f[i,]
-  ID <- x$f.eid
-  # Identify columns in which diagnosis is
-  diagnosiscolumn <- c(apply(x[,..proc], 1, function(r) which(r %in% grep(pattern = "K40|K41|K42|K43|K44|K45|K46|K49|K501|K502|K504|K75", r, value = T))))
+  datelist <- list()
+  for(i in 1:nrow(f)){
 
-  # Identify corresponding date columns
-  datecolumn <- procdate[diagnosiscolumn]
+    # Select row
+    x <- f[i,]
+    ID <- x$f.eid
+    # Identify columns in which diagnosis is
+    diagnosiscolumn <- c(apply(x[,..proc], 1, function(r) which(r %in% grep(pattern = "K40|K41|K42|K43|K44|K45|K46|K49|K501|K502|K504|K75", r, value = T))))
 
-  # Extract multiple of dates
-  datesframe <- subset(x, select = datecolumn)
+    # Identify corresponding date columns
+    datecolumn <- procdate[diagnosiscolumn]
 
-  # Mutate to date columns
-  datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
+    # Extract multiple of dates
+    datesframe <- subset(x, select = datecolumn)
 
-  # Select first occurrence
-  r <- c(apply(datesframe, 1, function(r) min(r)))
-  # Append to list
+    # Mutate to date columns
+    datesframe <- mutate_all(datesframe[1,], .funs = as.Date)
 
-  colnames(datesframe) <- as.character(1:ncol(datesframe))
+    # Select first occurrence
+    r <- c(apply(datesframe, 1, function(r) min(r)))
+    # Append to list
 
-  datelist[[i]] <- data.frame("f.eid" = x$f.eid, "HeartProcedure_first" =  r, datesframe)
+    colnames(datesframe) <- as.character(1:ncol(datesframe))
+
+    datelist[[i]] <- data.frame("f.eid" = x$f.eid, "HeartProcedure_first" =  r, datesframe)
+
+  }
+
+  # Unlist
+  dateresults <- do.call(bind_rows, datelist)
+
+  # Rename
+  colnames(dateresults) <- gsub("X", "HeartProcedure_date", colnames(dateresults))
+  # Left_join to dataset
+  d<-  left_join(d, dateresults, by = "f.eid")
 
 }
 
-# Unlist
-dateresults <- do.call(bind_rows, datelist)
-
-# Rename
-colnames(dateresults) <- gsub("X", "HeartProcedure_date", colnames(dateresults))
-# Left_join to dataset
-d<-  left_join(d, dateresults, by = "f.eid")
-
 
 message("wrapping up....")
-save(d, file= paste0(output, "/checkpoint3.rda"))
-#########################
+  save(d, file= paste0(output, "/checkpoint3.rda"))
 
+#########################
 
 for(i in 1:nrow(fields)){
   replacementcode <- fields$code[i]
   replacementtext <- fields$titlemerge[i]
   message(paste0(replacementcode)," will become ", paste0(replacementtext))
   colnames(d) <- gsub(paste0(replacementcode), paste0(replacementtext), colnames(d), fixed=T)
+
 }
 
 ############################
@@ -576,18 +595,35 @@ d$INSULIN[is.na(d$INSULIN)]<-0
 
 # Define corrected LDL based on LLT. (see PRS articles for explanation (trinder/talmud?))
 
-d$LDLC_LLT_CORRECTED <- ifelse(d$LLT==1, d$LdlDirect.0.0*1.43, d$LdlDirect.0.0)
+if (nrow(subset(d, d$LLT == 1)) > 0) {
 
-d$LDLC_WO_LLT <- ifelse(d$LLT !=1, d$LdlDirect.0.0, NA) # Only keeps the LDL-C for all participants without LLT
-d$APOB_WO_LLT <- ifelse(d$LLT !=1, d$ApolipoproteinB.0.0, NA) # Only keeps the LDL-C for all participants without LLT
+  d$LDLC_LLT_CORRECTED <- ifelse(d$LLT==1, d$LdlDirect.0.0*1.43, d$LdlDirect.0.0)
+
+}
+
+if (nrow(subset(d, d$LLT != 1)) > 0) {
+
+  d$LDLC_WO_LLT <- ifelse(d$LLT !=1, d$LDL_direct.0.0, NA) # Only keeps the LDL-C for all participants without LLT
+  d$APOB_WO_LLT <- ifelse(d$LLT !=1, d$Apolipoprotein_B.0.0, NA) # Only keeps the LDL-C for all participants without LLT
+
+}
+
 # Define HTT category
 
-d$SBP_WO_HTT <- ifelse(d$HTT !=1, d$SystolicBloodPressureAutomatedReading.0.0, NA) # Only keeps the SBP for all participants without HTT
+if (nrow(subset(d, d$HTT != 1)) > 0) {
 
+  d$SBP_WO_HTT <- ifelse(d$HTT !=1, d$Systolic_blood_pressure_automated_reading.0.0, NA) # Only keeps the SBP for all participants without HTT
+
+}
 
 # Define cardiovascular disease
 
-d$CVD <- ifelse(d$AllCADintermediate == 1 | d$strokeischemicfull == 1, 1, 0)
+if (nrow(subset(d, d$AllCADintermediate == 1)) > 0) {
+
+  d$CVD <- ifelse(d$AllCADintermediate == 1 | d$strokeischemicfull == 1, 1, 0)
+
+}
+
 
 d$CVD[is.na(d$CVD)] <- 0
 # Define diabetes

@@ -109,6 +109,7 @@ else
   # Merge with genotype data.
   /hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script3_merge_genotype_phenotype.r ${OUTPUT}
 
+  rm -r ${OUTPUT}/temp
 fi
 
 echo "Finished! Finito!"

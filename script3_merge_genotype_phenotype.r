@@ -44,8 +44,5 @@ load(file = paste0(input, "/ICD_outcome_cleaned.rda"))
 
 tot <- tot %>% inner_join(d, by = c('ID_1' = 'feid'), keep = T)
 
-d <- tot %>% select(!starts_with("f."))
-
 save(tot, file = paste0(input, "/FINAL_UKB_dataset.rda"))
-save(d, file = paste0(input, "/FINAL_UKB_dataset_named.rda"))
-write.table(d, "paste0(input, "/FINAL_UKB_dataset_named.tsv"), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
+write.table(tot, paste0(input, "/FINAL_UKB_dataset.tsv"), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
