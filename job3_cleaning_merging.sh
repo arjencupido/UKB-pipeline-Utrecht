@@ -104,12 +104,17 @@ else
   echo "File with phenotypes to be selected from UKB:____________________ [ ${PHENO} ]"
   echo "Prefix of the output file with selected phenotypes:______________ [ ${NAME} ]"
 
+  echo ""
+  echo "Putting R to work"
   # Clean data, create outcome variables.
   /hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script3_clean_data_create_outcome.r ${OUTPUT}/${NAME}_ukb_phenotypes.tab ${SCRIPT} ${OUTPUT}
   # Merge with genotype data.
   /hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script3_merge_genotype_phenotype.r ${OUTPUT}
 
+  echo ""
+  echo "Just cleaning up after myself"
   rm -r ${OUTPUT}/temp
+  rm ${OUTPUT}/chr*.csv ${OUTPUT}/checkpoint*
 fi
 
 echo "Finished! Finito!"

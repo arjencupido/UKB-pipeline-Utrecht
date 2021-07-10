@@ -61,4 +61,5 @@ These are finished but need some cleaning up and will come very very soon.
 - [ ] More outcomes
 - [ ] Others
 - [ ] Add progress bar job3_clean
-- [ ] Remove temporary folder
+- [x] Remove temporary folder
+- [ ] Add project name to (final) files
