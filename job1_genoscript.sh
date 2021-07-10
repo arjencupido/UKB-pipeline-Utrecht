@@ -106,8 +106,8 @@ else
   for CHR in $(seq 1 22); do
 
     echo "Working on chromosome ${CHR} now"
-    awk '$1 == ${CHR} {print $2}' ${INPUT} > ${TEMP}/chr${CHR}.txt
-    bgenix -g  /hpc/ukbiobank/genetic_v3/ukb_imp_chr1_v3.bgen -incl-rsids ${TEMP}/chr${CHR}.txt > ${OUTPUT}/chr${CHR}.bgen
+    awk -v var=${CHR} '$1 == var {print $2}' ${INPUT} > ${TEMP}/chr${CHR}.txt
+    bgenix -g  /hpc/ukbiobank/genetic_v3/ukb_imp_chr${CHR}_v3.bgen -incl-rsids ${TEMP}/chr${CHR}.txt > ${OUTPUT}/chr${CHR}.bgen
 
     # Create index files
     bgenix -g ${OUTPUT}/chr${CHR}.bgen -index -clobber

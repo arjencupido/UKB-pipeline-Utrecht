@@ -72,7 +72,7 @@ script_arguments_error() {
 	echoerror "$1" # ERROR MESSAGE
   echoerror "- Argument #1  --  Directory to the pipeline, could be '/hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht'"
   echoerror "- Argument #2  --  All/four  -- All indicates all scripts should be run, four means only job4"
-  echoerror "- Argument #3  --  Input directory, could be '/hpc/dhl_ec/mvanvugt/test'"
+  echoerror "- Argument #3  --  Input file and directory, could be '/hpc/dhl_ec/mvanvugt/test/variants.txt'"
   echoerror "- Argument #3  --  Output directory, could be '/hpc/dhl_ec/mvanvugt/test/results'"
 	echoerror ""
 	echoerror "An example command would be: run_UKB_pipeline.sh [arg1: /hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht] [arg2: All] [arg3: /hpc/dhl_ec/mvanvugt/test] [arg4: /hpc/dhl_ec/mvanvugt/test]."
@@ -91,12 +91,15 @@ else
   TYPE="$2"
   INPUT="$3"
   OUTPUT="$4"
+  INDIR=$( echo ${INPUT%/*} )
+  INFILE=$( echo ${INPUT ##/*/} )
 
   echo ""
   echo "Script directory:____________________________________ [ ${SCRIPT} ]"
-  echo "Input directory:_____________________________________ [ ${INPUT} ]"
+  echo "Input directory:_____________________________________ [ ${INDIR} ]"
   echo "Output directory:____________________________________ [ ${OUTPUT} ]"
   echo ""
+  echo "Input file:__________________________________________ [ ${INFILE} ]"
   cd ${SCRIPT}
 
   if [[ ! -d ${SCRIPT}/logs/ ]]; then

@@ -15,20 +15,37 @@ setwd(input)
 sample <- read.delim("/hpc/dhl_ec/data/ukbiobank/genetic_v3/ukb24711_imp_chr1_v3_s487371.sample",  sep = ' ', header=T)
 sample <- sample[-1,] # Remove first column
 
-chr1 <- read.csv("chr1.csv", header = T)
-
 chrs <- list()
-for (i in 2:22) {
+tot <- sample
+for (i in 1:22) {
 
-  chrs[[i]] <- read.csv(paste0("chr", i, ".csv"), header = T) %>% subset(select=-X))
+  if (i == 1) {
+    chrs[[i]] <- read.csv(paste0("chr", i, ".csv"), header = T)
+  } else {
+
+    chrs[[i]] <- read.csv(paste0("chr", i, ".csv"), header = T) %>% subset(select=-X)
+
+  }
+  if (nrow(chrs[[i]]) == nrow(sample)) {
+
+    tot <- cbind(tot, chrs[[i]])
+
+  } else {
+
+    cat(paste0("\nALERT! The file for chromosome ", i, " has a different number of rows: "))
+    cat(paste0(nrow(chrs[[i]]), " in stead of ", nrow(sample), "\n"))
+
+  }
 
 }
 
 load(file = paste0(input, "/ICD_outcome_cleaned.rda"))
 
 
-tot <- cbind(sample, chr1, chrs[[2]], chrs[[3]], chrs[[4]], chrs[[5]], chrs[[6]], chrs[[7]], chrs[[8]], chrs[[9]], chrs[[10]], chrs[[11]], chrs[[12]], chrs[[13]], chrs[[14]], chrs[[15]], chrs[[16]], chrs[[17]], chrs[[18]], chrs[[19]], chrs[[20]], chrs[[21]], chrs[[22]]) %>% inner_join(d, by = c('ID_1' = 'feid'), keep = T)
+tot <- tot %>% inner_join(d, by = c('ID_1' = 'feid'), keep = T)
 
-d <- tot
+d <- tot %>% select(!starts_with("f."))
 
-save(d, file = paste0(input, "/FINAL_UKB_dataset.rda"))
+save(tot, file = paste0(input, "/FINAL_UKB_dataset.rda"))
+save(d, file = paste0(input, "/FINAL_UKB_dataset_named.rda"))
+write.table(d, "paste0(input, "/FINAL_UKB_dataset_named.tsv"), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")

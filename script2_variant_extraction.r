@@ -7,6 +7,7 @@
 # Argument #2 -- Whether all chromosomes should be done (TRUE) or the number of the chromosome to be analyzed
 
 # This script can take a while to run.
+# NB SCRIPT DOES NOT WORK IF ONE RSID VARIANT IS DOUBLE IN THE VARIANT LIST! (e.g. a variant that has multiple different alleles)
 #########################
 
 args = commandArgs(trailingOnly = TRUE)
@@ -25,43 +26,38 @@ if (isTRUE(type)) {
 
   ###################################################
   # per chromosome
-  # NB SCRIPT DOES NOT WORK IF ONE RSID VARIANT IS DOUBLE IN THE VARIANT LIST! (e.g. a variant that has multiple different alleles)
-
-
+  cat("All chromosomes are analyzed...\n")
   # loop
   for(i in 1:length(chromosomevector)){
 
     print(paste0(chromosomevector[i]))
 
-    variants = read.delim(paste0(input, chromosomevector[i], ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
+    variants = read.delim(paste0(input, "/", chromosomevector[i], ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
     varvec <- c(as.character(variants$rsid))
 
     data = bgen.load(paste0(chromosomevector[i],".bgen"), rsids = varvec)
     data.summ = apply(data$data, 1, function(data) { return(data[,1]*0 + data[,2]*1 + data[,3]*2) })
+    #chromosomelist[paste(chromosomevector[i])] <- data.summ
+    if (i == 1) {
+      chromosomedataframe <- data.summ
+    } else {
+      chromosomedataframe <- cbind(chromosomedataframe, data.summ)
+    }
 
     write.csv(data.summ, paste0(chromosomevector[i],".csv"))
   } # End iteration chromosomes
+
+  write.csv(chromosomedataframe, "total_variants.csv")
 
 } else {
 
   ###################################################
   # For individual analyses
-  chromosomelist[paste(chromosomevector[i])] <- data.summ
-  chromosomedataframe <- data.frame()
 
-  for (i in 1:22) {
-    chromosomedataframe <- cbind(chromosomedataframe, chromosomelist[[i]])
-  }
-
-  write.csv(chromosomedataframe, "total_variants.csv")
-
-  # End
-
+  cat(paste0("Only chromosome ", type, " is analyzed...\n"))
   variants = read.delim(paste0(input, "/chr", type, ".list"), stringsAsFactors=FALSE, header=TRUE, skip=1, comment.char="#")
-  varvec <- c(as.character(variants2$rsid))
-  varvec2 <- c(as.character(variants$rsid[3:96]))
-  varvec3 <- c(as.character(variants$rsid[61:96]))
-  data = bgen.load(paste0("chr", type, "".bgen"), rsids = varvec)
+  varvec <- c(as.character(variants$rsid))
+  data = bgen.load(paste0("chr", type, ".bgen"), rsids = varvec)
   data.summ = apply(data$data, 1, function(data) { return(data[,1]*0 + data[,2]*1 + data[,3]*2) })
 
   write.csv(data.summ, paste0("chr", type, ".csv"))
