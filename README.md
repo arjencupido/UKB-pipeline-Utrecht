@@ -2,7 +2,7 @@
 
 Date: 16-MAR-2020
 
-Last updated: 09-JUL-2021
+Last updated: 10-JUL-2021
 
 **Introduction**
 -----------------
@@ -24,20 +24,19 @@ The idea to not merge this to 1 job is because sometimes:
 - You quickly want an additional phenotype (avoiding the lengthy genotype scripts).  
 
 
-**Job1: variant extraction and cleaning.**
+**Job1: Variant extraction and conversion from BGEN to csv.**
 - This job extracts SNPs from the BGEN files, writes to BGEN files and creates index and list files.
-- Also calls script2_variant_extraction.r, read down below.
+- Also calls script1_variant_extraction.r, read down below.
+	- This job converts the variants to .csv.
+	- NB SCRIPT DOES NOT WORK IF ONE RSID VARIANT IS DOUBLE IN THE VARIANT LIST! (e.g. a variant that has multiple different alleles)
+	- Originally written by Amy Mason (University of Cambridge)
 
-**~~Job2: Conversion of variants from BGEN to .csv~~**
-- Job2 has become redundant because of addition to job1, but the script2_variant_extraction.r is still run
-- This job converts the variants to .csv.
-- NB SCRIPT DOES NOT WORK IF ONE RSID VARIANT IS DOUBLE IN THE VARIANT LIST! (e.g. a variant that has multiple different alleles)
-- Originally written by Amy Mason (University of Cambridge)
-
-**Job3: phenoscript_cleaning_merging**
+**Job2: Phenotype extraction**
 - This job extracts the right datafields from the tab-delimited UKB files for both outcome and biomarkers.
-	- NB The first part of this job is calling a script which cuts your desired phenotypes.
 	- Read [here](https://github.com/CirculatoryHealth/UKBioPick) how it works.
+	- Shortly: Make a tab-seperated file with the columns FieldID and Field containing the fields you want to extract, taken from the UKBB Data dictionary
+
+**Job3: Cleaning the phenotype file and merging the pheno-genotypes**
 - This job also comprises of 2 subsequent R scripts (script3_...).
 	- The first R script script3_clean_data_create_outcome.r aggregates data on disease from the outcome fields to 1 variable. In essence these variables can be seen as lifetime incidence of disease X. Currently only for CAD: It extracts all dates a certain ICD/procedure code were assigned to a patient, with a dedicated column for the first occurrence of that code. It also renames all columns. See fields.csv for justification. For outcome justification: see excel file.
 	- The second R script merges all phenotype data with genotype data.

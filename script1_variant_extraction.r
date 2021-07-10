@@ -14,6 +14,8 @@ args = commandArgs(trailingOnly = TRUE)
 input = args[1]
 type = args[2]
 
+print(type)
+
 setwd(input)
 require(rbgen)
 require(dplyr)
@@ -22,7 +24,7 @@ chromosomevector <- c("chr1", "chr2", "chr3", "chr4", "chr5", "chr6",  "chr7", "
 
 chromosomelist <- list()
 
-if (isTRUE(type)) {
+if (type == "TRUE") {
 
   ###################################################
   # per chromosome

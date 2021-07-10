@@ -1,21 +1,21 @@
 #!/bin/bash
 #SBATCH --time=14:59:59
 #SBATCH --mem=64G
-#SBATCH --job-name 3_Phenoscript                                             		  # the name of this script
+#SBATCH --job-name 3_Merge_clean                                             		  # the name of this script
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=m.vanvugt-2@umcutrecht.nl
 
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "                                        Script to extract phenotype data from UKB tab file                                       "
-echo "                                                      version 1.1 (20210709)                                                     "
+echo "                                     Script to cleans and merges the phenotype/genotype files                                    "
+echo "                                                      version 1.1 (20210710)                                                     "
 echo ""
 echo "* Written by      : Arjen Cupido"
 echo "* Adapted by      : Marion van Vugt"
 echo "* E-mail          : m.vanvugt-2@umcutrecht.nl"
-echo "* Last update     : 2021-07-09"
-echo "* Version         : Phenoscript_1.1"
+echo "* Last update     : 2021-07-10"
+echo "* Version         : Merge_clean_1.1"
 echo ""
-echo "* Description     : This script extracts phenotype data from UKB tab file."
+echo "* Description     : This script cleans and merges the phenotype/genotype files."
 echo ""
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
@@ -73,13 +73,13 @@ script_arguments_error() {
   echoerror "- Argument #3   -- OPTIONAL -- Path and name to/of the file with phenotypes to be selected from the UKB phenotype file, could be '/hpc/dhl_ec/mvanvugt/UKBB/phenotypes.tsv'"
   echoerror "- Argument #4   -- OPTIONAL -- Path and name to/of the UKB phenotype file, could be '/hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab'"
 	echoerror ""
-  echoerror "An example command would be: job3_phenoscript_cleaning_merging.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB] [arg2: Project1] [arg3: /hpc/dhl_ec/mvanvugt/UKBB/phenotypes.tsv] [arg4: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
+  echoerror "An example command would be: job3_cleaning_merging.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB] [arg2: Project1] [arg3: /hpc/dhl_ec/mvanvugt/UKBB/phenotypes.tsv] [arg4: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
   echoerror ""
   echoerror "For argument #3 and #4, defaults are stated, namely:"
   echoerror "Argument #3 default = Phenotypes.tsv (present in the folder of the scripts)"
   echoerror "Argument #4 default = /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab"
   echoerror "If you want to change the UK Biobank phenotype file, but not the default of the selection file, use the following command:"
-	echoerror "job3_phenoscript_cleaning_merging.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB] [arg2: Project1] [arg3: ""] [arg4: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
+	echoerror "job3_cleaning_merging.sh [arg1: /hpc/dhl_ec/mvanvugt/UKBB] [arg2: Project1] [arg3: ""] [arg4: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
 	echoerror "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   	# The wrong arguments are passed, so we'll exit the script now!
   	exit 1
@@ -103,9 +103,6 @@ else
   echo "Phenotype file of the UKB:_______________________________________ [ ${UKB} ]"
   echo "File with phenotypes to be selected from UKB:____________________ [ ${PHENO} ]"
   echo "Prefix of the output file with selected phenotypes:______________ [ ${NAME} ]"
-
-  # Cut ICD and other outcome data, please define the place where your UKB data is.
-  sbatch /hpc/dhl_ec/mvanvugt/scripts/ukb_pheno_v1.sh ${UKB} ${PHENO} ${OUTPUT} ${NAME}
 
   # Clean data, create outcome variables.
   /hpc/dhl_ec/arjencupido/R-4.0.3/bin/Rscript ${SCRIPT}/script3_clean_data_create_outcome.r ${OUTPUT}/${NAME}_ukb_phenotypes.tab ${SCRIPT} ${OUTPUT}

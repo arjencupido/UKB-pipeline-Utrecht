@@ -2,21 +2,20 @@
 #SBATCH --time=03:59:59
 #SBATCH --mem=64G
 #SBATCH --job-name run_UKB_pipeline                                             		  # the name of this script
+#SBATCH --output run_UKB_pipeline_%j.log
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=m.vanvugt-2@umcutrecht.nl
 
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "              Script to extract variants of choice and create the index files and list files for further processing              "
+echo "                                                   Script to run the pipeline                                                    "
 echo "                                                      version 1.1 (20210709)                                                     "
 echo ""
-echo "* Written by      : Arjen Cupido"
-echo "* Adapted by      : Marion van Vugt"
+echo "* Written by      : Marion van Vugt"
 echo "* E-mail          : m.vanvugt-2@umcutrecht.nl"
 echo "* Last update     : 2021-07-09"
-echo "* Version         : Genoscript_1.1"
+echo "* Version         : run_UKB_pipeline_1.1"
 echo ""
-echo "* Description     : This script extracts variants of choice by reading in the names of the variants that are defined in the "
-echo "                    indicated file. It also creates the index files and list files for further processing."
+echo "* Description     : This script starts the pipeline."
 echo ""
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
@@ -73,17 +72,27 @@ script_arguments_error() {
   echoerror "- Argument #1  --  Directory to the pipeline, could be '/hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht'"
   echoerror "- Argument #2  --  All/four  -- All indicates all scripts should be run, four means only job4"
   echoerror "- Argument #3  --  Input file and directory, could be '/hpc/dhl_ec/mvanvugt/test/variants.txt'"
-  echoerror "- Argument #3  --  Output directory, could be '/hpc/dhl_ec/mvanvugt/test/results'"
-	echoerror ""
-	echoerror "An example command would be: run_UKB_pipeline.sh [arg1: /hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht] [arg2: All] [arg3: /hpc/dhl_ec/mvanvugt/test] [arg4: /hpc/dhl_ec/mvanvugt/test]."
-	echoerror "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echoerror "- Argument #4  --  Output directory, could be '/hpc/dhl_ec/mvanvugt/test/results'"
+  echoerror "- Argument #5  --  Project name, could be 'Project1'"
+  echoerror "- Argument #6   -- OPTIONAL -- Path and name to/of the file with phenotypes to be selected from the UKB phenotype file, could be '/hpc/dhl_ec/mvanvugt/UKBB/phenotypes.tsv'"
+  echoerror "- Argument #7   -- OPTIONAL -- Path and name to/of the UKB phenotype file, could be '/hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab'"
+  echoerror ""
+  echoerror "An example command would be: run_UKB_pipeline.sh [arg1: /hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht] [arg2: All] [arg3: /hpc/dhl_ec/mvanvugt/test] [arg4: /hpc/dhl_ec/mvanvugt/test] [arg5: Project1] [arg6: /hpc/dhl_ec/mvanvugt/UKBB/phenotypes.tsv] [arg7: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
+  echoerror ""
+  echoerror "For argument #6 and #7, defaults are stated, namely:"
+  echoerror "Argument #6 default = Phenotypes.tsv (present in the folder of the scripts)"
+  echoerror "Argument #7 default = /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab"
+  echoerror "If you want to change the UK Biobank phenotype file, but not the default of the selection file, use the following command:"
+  echoerror "run_UKB_pipeline.sh [arg1: /hpc/dhl_ec/mvanvugt/Software/UKB-pipeline-Utrecht] [arg2: All] [arg3: /hpc/dhl_ec/mvanvugt/test] [arg4: /hpc/dhl_ec/mvanvugt/test] [arg5: Project1] [arg6: ""] [arg7: /hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab]."
+  echoerror ""
+  echoerror "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   	# The wrong arguments are passed, so we'll exit the script now!
   	exit 1
 }
 
-if [ $# -lt 4]; then
+if [ $# -lt 5]; then
   echo "Error, number of arguments found "$#"."
-  script_arguments_error "You must supply [4] correct arguments when running this script"
+  script_arguments_error "You must supply [5] correct arguments when running this script"
 
 else
 
@@ -93,6 +102,9 @@ else
   OUTPUT="$4"
   INDIR=$( echo ${INPUT%/*} )
   INFILE=$( echo ${INPUT ##/*/} )
+  NAME="$5"
+  UKB=${7:-/hpc/dhl_ec/data/ukbiobank/phenotypic/ukb44641.tab}
+  PHENO="${6:-$( echo ${SCRIPT}/Phenotypes.tsv )}"
 
   echo ""
   echo "Script directory:____________________________________ [ ${SCRIPT} ]"
@@ -100,6 +112,9 @@ else
   echo "Output directory:____________________________________ [ ${OUTPUT} ]"
   echo ""
   echo "Input file:__________________________________________ [ ${INFILE} ]"
+  echo "File with phenotypes to be selected:_________________ [ ${PHENO} ]"
+  echo "UKBiobank phenotype file:____________________________ [ ${UKB} ]"
+  echo "Project name:________________________________________ [ ${NAME} ]"
   cd ${SCRIPT}
 
   if [[ ! -d ${SCRIPT}/logs/ ]]; then
@@ -117,7 +132,7 @@ else
     DEP1=$(sbatch --output ${SCRIPT}/logs/job1.log ${SCRIPT}/job1_genoscript.sh ${INPUT} ${OUTPUT} | sed 's/Submitted batch job //')
 
     echo "Continuing with the phenotypes"
-    sbatch --output --dependency=afterok:${DEP1} ${SCRIPT}/logs/job3.log ${SCRIPT}/job3_phenoscript_cleaning_merging.sh ${OUTPUT} test
+    sbatch --output ${SCRIPT}/logs/job3.log --dependency=afterok:${DEP1} ${SCRIPT}/job3_phenoscript_cleaning_merging.sh ${OUTPUT} ${NAME} ${PHENO} ${UKB}
 
 
   elif [[ ${TYPE} == "four" ]]; then
