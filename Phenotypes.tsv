@@ -1,0 +1,181 @@
+FieldID	Field
+31	Sex
+34	Year of birth
+48	Waist circumference
+49	Hip circumference
+50	Standing height
+52	Month of birth
+53	Date of attending assessment centre
+2443	Diabetes diagnosed by doctor
+2492	Taking other prescription medications
+2976	Age diabetes diagnosed
+4041	Gestational diabetes only
+4079	"Diastolic blood pressure, automated reading"
+4080	"Systolic blood pressure, automated reading"
+5983	"ECG, heart rate"
+5987	"ECG, trend phase name"
+5988	"ECG, stage name"
+6153	"Medication for cholesterol, blood pressure, diabetes, or take exogenous hormones"
+6177	"Medication for cholesterol, blood pressure or diabetes"
+12144	Height
+20002	"Non-cancer illness code, self-reported"
+20003	Treatment/medication code
+20116	Smoking status
+21000	Ethnic background
+21001	Body mass index (BMI)
+21002	Weight
+21871	Cardiac monitor sign-off timestamp
+22000	Genotype measurement batch
+22001	Genetic sex
+22002	CEL files
+22003	Heterozygosity
+22004	"Heterozygosity, PCA corrected"
+22005	Missingness
+22006	Genetic ethnic grouping
+22007	Genotype measurement plate
+22008	Genotype measurement well
+22009	Genetic principal components
+22010	Recommended genomic analysis exclusions
+22011	Genetic relatedness pairing
+22013	Genetic relatedness IBS0
+22018	Genetic relatedness exclusions
+22032	IPAQ activity group
+22670	Minimum carotid IMT (intima-medial thickness) at 120 degrees
+22671	Mean carotid IMT (intima-medial thickness) at 120 degrees
+22672	Maximum carotid IMT (intima-medial thickness) at 120 degrees
+22673	Minimum carotid IMT (intima-medial thickness) at 150 degrees
+22674	Mean carotid IMT (intima-medial thickness) at 150 degrees
+22675	Maximum carotid IMT (intima-medial thickness) at 150 degrees
+22676	Minimum carotid IMT (intima-medial thickness) at 210 degrees
+22677	Mean carotid IMT (intima-medial thickness) at 210 degrees
+22678	Maximum carotid IMT (intima-medial thickness) at 210 degrees
+22679	Minimum carotid IMT (intima-medial thickness) at 240 degrees
+22680	Mean carotid IMT (intima-medial thickness) at 240 degrees
+22681	Maximum carotid IMT (intima-medial thickness) at 240 degrees
+30000	White blood cell (leukocyte) count
+30010	Red blood cell (erythrocyte) count
+30020	Haemoglobin concentration
+30030	Haematocrit percentage
+30040	Mean corpuscular volume
+30050	Mean corpuscular haemoglobin
+30060	Mean corpuscular haemoglobin concentration
+30070	Red blood cell (erythrocyte) distribution width
+30080	Platelet count
+30090	Platelet crit
+30100	Mean platelet (thrombocyte) volume
+30110	Platelet distribution width
+30120	Lymphocyte count
+30130	Monocyte count
+30140	Neutrophill count
+30150	Eosinophill count
+30160	Basophill count
+30170	Nucleated red blood cell count
+30180	Lymphocyte percentage
+30190	Monocyte percentage
+30200	Neutrophill percentage
+30210	Eosinophill percentage
+30220	Basophill percentage
+30230	Nucleated red blood cell percentage
+30240	Reticulocyte percentage
+30250	Reticulocyte count
+30260	Mean reticulocyte volume
+30270	Mean sphered cell volume
+30280	Immature reticulocyte fraction
+30290	High light scatter reticulocyte percentage
+30300	High light scatter reticulocyte count
+30500	Microalbumin in urine
+30510	Creatinine (enzymatic) in urine
+30520	Potassium in urine
+30530	Sodium in urine
+30600	Albumin
+30610	Alkaline phosphatase
+30620	Alanine aminotransferase
+30630	Apolipoprotein A
+30640	Apolipoprotein B
+30650	Aspartate aminotransferase
+30660	Direct bilirubin
+30670	Urea
+30680	Calcium
+30690	Cholesterol
+30700	Creatinine
+30710	C-reactive protein
+30720	Cystatin C
+30730	Gamma glutamyltransferase
+30740	Glucose
+30750	Glycated haemoglobin (HbA1c)
+30760	HDL cholesterol
+30770	IGF-1
+30780	LDL direct
+30790	Lipoprotein A
+30800	Oestradiol
+30810	Phosphate
+30820	Rheumatoid factor
+30830	SHBG
+30840	Total bilirubin
+30850	Testosterone
+30860	Total protein
+30870	Triglycerides
+30880	Urate
+30890	Vitamin D
+40000	Date of death
+40001	Underlying (primary) cause of death: ICD10
+40002	Contributory (secondary) causes of death: ICD10
+40005	Date of cancer diagnosis
+40006	Type of cancer: ICD10
+40007	Age at death
+40013	Type of cancer: ICD9
+41200	Operative procedures - main OPCS4
+41202	Diagnoses - main ICD10
+41203	Diagnoses - main ICD9
+41204	Diagnoses - secondary ICD10
+41205	Diagnoses - secondary ICD9
+41210	Operative procedures - secondary OPCS4
+41260	Date of first operative procedure - main OPCS4
+41262	Date of first in-patient diagnosis - main ICD10
+41263	Date of first in-patient diagnosis - main ICD9
+41270	Diagnoses - ICD10
+41271	Diagnoses - ICD9
+41272	Operative procedures - OPCS4
+41273	Operative procedures - OPCS3
+41280	Date of first in-patient diagnosis - ICD10
+41281	Date of first in-patient diagnosis - ICD9
+41282	Date of first operative procedure - OPCS4
+41283	Date of first operative procedure - OPCS3
+42000	Date of myocardial infarction
+42001	Source of myocardial infarction report
+42002	Date of STEMI
+42003	Source of STEMI report
+42004	Date of NSTEMI
+42005	Source of NSTEMI report
+42006	Date of stroke
+42007	Source of stroke report
+42008	Date of ischaemic stroke
+42009	Source of ischaemic stroke report
+42010	Date of intracerebral haemorrhage
+42011	Source of intracerebral haemorrhage report
+42012	Date of subarachnoid haemorrhage
+42013	Source of subarachnoid haemorrhage report
+42014	Date of asthma report
+42015	Source of asthma report
+42016	Date of chronic obstructive pulmonary disease report
+42017	Source of chronic obstructive pulmonary disease report
+42018	Date of all cause dementia report
+42019	Source of all cause dementia report
+42020	Date of alzheimer's disease report
+42021	Source of alzheimer's disease report
+42022	Date of vascular dementia report
+42023	Source of vascular dementia report
+42024	Date of frontotemporal dementia report
+42025	Source of frontotemporal dementia report
+42026	Date of end stage renal disease report
+42027	Source of end stage renal disease report
+42028	Date of motor neurone disease report
+42029	Source of motor neurone disease report
+42030	Date of all cause parkinsonism report
+42031	Source of all cause parkinsonism report
+42032	Date of parkinson's disease report
+42033	Source of parkinson's disease report
+42034	Date of progressive supranuclear palsy report
+42035	Source of progressive supranuclear palsy report
+42036	Date of multiple system atrophy report
+42037	Source of multiple system atrophy report

@@ -1,0 +1,11 @@
+# CALIBER files
+ICD*csv
+OPCS*csv
+CPRD*csv
+
+# Data files
+*.txt
+
+# Log files
+*log
+*.out
