@@ -2,7 +2,6 @@
 #SBATCH --time=14:59:59
 #SBATCH --mem=64G
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=arjen.cupido@gmail.com
 
 # Script to extract phenotype data from UKB tab file
 
