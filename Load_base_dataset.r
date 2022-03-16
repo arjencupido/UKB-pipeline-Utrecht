@@ -2,7 +2,6 @@
 # Arjen Cupido
 # Creation date: 24/08/2020
 # Last updated: 17/02/2021
-# E: arjen.cupido@gmail.com
 ############################
 message('Load packages...')
 # Load packages
