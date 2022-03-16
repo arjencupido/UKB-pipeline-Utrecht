@@ -2,7 +2,6 @@
 ##### R script for aggregation of ICD10 codes, cleaning data and definition of other variables.
 ##### Author: Arjen Cupido
 ##### Last update: 2021/04/01
-##### EMAIL: arjen.cupido@gmail.com
 ########################################################################################################
 
 ###libraries
